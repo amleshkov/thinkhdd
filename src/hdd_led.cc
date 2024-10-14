@@ -14,7 +14,7 @@
 #include <signal.h>
 
 // This is the interface to the LED.
-static const char *led_fn = "/proc/acpi/ibm/led";
+static const char *led_fn = "/sys/devices/platform/thinkpad_acpi/leds/tpacpi::lid_logo_dot/brightness";
 // The file to watch.  Whenever this changes, the LED flashes.  You could for example tie the
 // LED to network activity or something by changing this.
 static const char *stats_fn = "/proc/diskstats";
@@ -24,10 +24,9 @@ static const int flash_off_interval = 40000; // flash at 20 Hz, 20% duty cycle
 static const int flash_on_interval  = 10000;
 
 void set_led(int new_status) {
-	int led_id = 0;
 	std::ofstream fh(led_fn, std::ios::out);
 	if(fh) {
-		fh << led_id << " " << (new_status ? "on" : "off") << std::endl;
+		fh << new_status << std::endl;
 	} else {
 		std::cerr << "Could not open " << led_fn << ", aborting." << std::endl;
 		exit(1);
